@@ -1,0 +1,640 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Enquiry Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        /* White Patch Section */
+        .white-patch {
+            background-color: white;
+            width: 100%;
+            height: 60px; /* Height of the white patch */
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000; /* Ensure it stays on top */
+            display: flex;
+            align-items: center;
+            padding-left: 10px; /* Adjust padding to ensure logo is aligned */
+        }
+        .logo {
+            height: auto;
+            max-height: 50px; /* Set a maximum height for the logo */
+        }
+
+        .background-container {
+            width: 100%;
+            height: 70vh; /* 70% of the viewport height for the image section */
+            overflow: hidden;
+            position: relative;
+            margin-top: 60px; /* Create space for the white patch */
+        }
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .chat-container {
+            background: rgba(255, 255, 255, 0.9); /* Slightly transparent background for the chatbot */
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 500px; /* Increased width */
+            max-width: 90%;
+            padding: 20px;
+            margin: 20px auto; /* Centers the chatbot horizontally */
+            position: relative;
+            z-index: 3; /* Ensures the chatbot is above all other elements */
+            margin-top: 10px; /* Adjust spacing between the image section and chatbot */
+        }
+        h1 {
+            font-size: 1.5em;
+            color: #333;
+            text-align: center;
+        }
+        .chat-box {
+            margin-top: 20px;
+        }
+        .chat-box select {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        .chat-box button {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .chat-box button:hover {
+            background-color: #0056b3;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            font-size: 1em;
+            color: #333;
+        }
+        .question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="white-patch">
+        <img src="https://www.nmit.ac.in/img/nitte-nmit-logo.png" alt="College Logo" class="logo">
+    </div>
+
+    <Background Image Section -->
+    <!-- <div class="background-container">
+        <div class="background-image" id="backgroundImage"></div>
+    </div>
+
+    <div class="chat-container">
+        <h1>College Enquiry Chatbot</h1>
+        <div class="chat-box">
+            <select id="userQuestion">
+                <option value="">Select a question...</option>
+                <option value="admission">What is the admission process?</option>
+                <option value="courses">What courses are offered?</option>
+                <option value="fees">What is the fee structure?</option>
+                <option value="hostels">Which hostels are available?</option>
+                <option value="life">How is life at NMIT?</option>
+                <option value="contact">What are the college's contact details?</option>
+                <option value="transportation">What are the transportation options available?</option>
+                <option value="library">Does the college have a library?</option>
+                <option value="extracurricular">What are the extracurricular activities offered?</option>
+            </select>
+            <button onclick="sendMessage()">Submit</button>
+        </div>
+        <div id="chatResponse" class="response"></div>
+    </div>
+
+    <script>
+        // Array of image URLs to cycle through
+        const imageUrls = [
+            "https://content3.jdmagicbox.com/v2/comp/bangalore/06/080p5608106/catalogue/nitte-meenakshi-institute-of-technology-yelahanka-bangalore-institutes-for-electronic-engineering-px93y7tb4a.jpg",
+            "https://collegekeeda.com/wp-content/uploads/2023/11/nitte-meenakshi-institute-of-technology.webp",
+            "https://www.dqlabs.in/images/NITTE-School-of-Architecture-7.png",
+            "https://www.highereducationdigest.com/wp-content/uploads/2021/05/4.jpg"
+        ];
+
+        let currentImageIndex = 0;
+
+        // Function to change the background image every 5 seconds
+        function changeBackgroundImage() {
+            const backgroundImageDiv = document.getElementById('backgroundImage');
+            backgroundImageDiv.style.backgroundImage = `url(${imageUrls[currentImageIndex]})`;
+
+            currentImageIndex = (currentImageIndex + 1) % imageUrls.length;
+        }
+
+        // Change background image every 5 seconds
+        setInterval(changeBackgroundImage, 5000);
+
+        // Call the function once on page load to set the initial background
+        changeBackgroundImage();
+
+        function sendMessage() {
+            const userQuestion = document.getElementById('userQuestion').value;
+            const responseDiv = document.getElementById('chatResponse');
+
+            // Responses for predefined questions
+            const responses = {
+                "admission": "The admission process involves submitting your documents and completing an online application.",
+                "courses": "We offer the following courses:<br>1. Computer Science<br>2. Electronics<br>3. Mechanical Engineering<br>4. Civil Engineering<br>5. Aeronautical Engineering<br>6. Artificial Intelligence & Data Science<br>7. Artificial Intelligence & Machine Learning",
+                "fees": "The fee structure varies by course. Please check our website for detailed information.",
+                "hostels": "The available hostel options are Nethravathy, Kumardhara, Sharavathi & Venkateshwara for girls, and Nandini, Shambavi, Kavery & Souparnika for boys.",
+                "life": "Life at NMIT is filled with co-curricular activities, learning new skills, and building innovative minds.",
+                "contact":"Office: +91-80-22167800 , For Admission : +91-81510-04455, +91-80-22167929 , enquiry@nitte.edu.in  " ,
+                "transportation": "Campus buses, nearby public transport " ,
+                "library" : "Library facilities, resources available " ,
+                "extracurricular" : "Clubs, societies, sports teams, NCC, NSS ",
+            };
+
+            if (userQuestion) {
+                responseDiv.innerHTML = `
+                    <div class="question">You asked: ${document.querySelector("#userQuestion option:checked").textContent}</div>
+                    <div>${responses[userQuestion]}</div>
+                `;
+            } else {
+                responseDiv.textContent = "Please select a question.";
+            }
+        }
+    </script>
+</body>
+</html>  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Enquiry Chatbot</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1d4ed8;
+            --background-color: #f8fafc;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+
+        .header {
+            background-color: white;
+            padding: 12px 24px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 45px;
+            width: auto;
+        }
+
+        .image-slider {
+            margin-top: 69px;
+            height: 60vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slider-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            object-fit: cover;
+        }
+
+        .slider-image.active {
+            opacity: 1;
+        }
+
+        .chat-section {
+            position: relative;
+            padding: 20px;
+            margin-top: -50px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .chat-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .chat-header h1 {
+            color: var(--text-color);
+            font-size: 1.75rem;
+            margin-bottom: 8px;
+        }
+
+        .chat-header p {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        .chat-interface {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        select {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--text-color);
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .chat-messages {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: #f1f5f9;
+            color: var(--text-color);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background-color: #f1f5f9;
+            border-radius: 12px;
+            width: fit-content;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .typing-indicator.active {
+            opacity: 1;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
+        }
+
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-6px); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .image-slider {
+                height: 40vh;
+            }
+
+            .chat-container {
+                padding: 16px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <img src="https://www.nmit.ac.in/img/nitte-nmit-logo.png" alt="NMIT Logo" class="logo">
+    </header>
+
+    <div class="image-slider" id="imageSlider"></div>
+
+    <section class="chat-section">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h1>College Enquiry Assistant</h1>
+                <p>Ask us anything about NMIT</p>
+            </div>
+
+            <div class="chat-interface">
+                <div class="input-group">
+                    <select id="userQuestion">
+                        <option value="">Choose your question...</option>
+                        <option value="admission">What is the admission process?</option>
+                        <option value="courses">What courses are offered?</option>
+                        <option value="fees">What is the fee structure?</option>
+                        <option value="hostels">Which hostels are available?</option>
+                        <option value="life">How is life at NMIT?</option>
+                        <option value="contact">What are the college's contact details?</option>
+                        <option value="transportation">What are the transportation options?</option>
+                        <option value="library">Tell me about the library facilities</option>
+                        <option value="extracurricular">What extracurricular activities are offered?</option>
+                    </select>
+                    <button onclick="sendMessage()">Ask</button>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const imageUrls = [
+            "https://content3.jdmagicbox.com/v2/comp/bangalore/06/080p5608106/catalogue/nitte-meenakshi-institute-of-technology-yelahanka-bangalore-institutes-for-electronic-engineering-px93y7tb4a.jpg",
+            "https://collegekeeda.com/wp-content/uploads/2023/11/nitte-meenakshi-institute-of-technology.webp",
+            "https://www.dqlabs.in/images/NITTE-School-of-Architecture-7.png",
+            "https://www.highereducationdigest.com/wp-content/uploads/2021/05/4.jpg"
+        ];
+
+        const responses = {
+            "admission": `Our admission process consists of the following steps:
+                • Submit academic documents including 10+2 marks
+                • Complete online application form
+                • Entrance exam scores (JEE/KCET/COMEDK)
+                • Document verification
+                • Counseling session
+                • Fee payment
+                
+                Our admission team provides guidance throughout the process.`,
+            "courses": `We offer the following B.E. programs:
+                • Computer Science Engineering
+                • Electronics & Communication
+                • Mechanical Engineering
+                • Civil Engineering
+                • Aeronautical Engineering
+                • AI & Data Science
+                • AI & Machine Learning
+                
+                Each program is AICTE approved with modern curriculum.`,
+            "fees": `Annual fee structure for various programs:
+                • Regular Engineering: ₹2,00,000
+                • AI & DS/ML Programs: ₹2,50,000
+                • Management Studies: ₹1,80,000
+                
+                Scholarships available for meritorious students.`,
+            "hostels": `We have separate hostels for boys and girls:
+                
+                Girls Hostels:
+                • Nethravathy
+                • Kumardhara
+                • Sharavathi
+                • Venkateshwara
+                
+                Boys Hostels:
+                • Nandini
+                • Shambavi
+                • Kavery
+                • Souparnika
+                
+                All hostels have Wi-Fi, dining, and 24/7 security.`,
+            "life": `Campus life at NMIT includes:
+                • Dynamic student communities
+                • Technical workshops & seminars
+                • Cultural festivals
+                • Sports tournaments
+                • Industry interactions
+                • Research opportunities
+                • Innovation labs
+                
+                We focus on overall student development.`,
+            "contact": `Reach us through:
+                • Main Office: +91-80-22167800
+                • Admissions: +91-81510-04455
+                • Admission Office: +91-80-22167929
+                • Email: enquiry@nitte.edu.in
+                
+                Location: NMIT, Yelahanka, Bangalore-560064`,
+            "transportation": `We provide comprehensive transport facilities:
+                • College buses covering major Bangalore routes
+                • Pick-up points across the city
+                • Metro station shuttle service
+                • Transport help desk
+                
+                Contact transport office for routes and timing details.`,
+            "library": `Our library features:
+                • 50,000+ books and journals
+                • Digital library access
+                • Online research databases
+                • Reading halls
+                • Discussion rooms
+                • Regular book exhibitions
+                
+                Open from 8 AM to 8 PM on working days.`,
+            "extracurricular": `We offer various activities:
+                • Technical clubs (Coding, Robotics)
+                • Cultural clubs (Music, Dance, Drama)
+                • Sports teams & facilities
+                • NCC and NSS units
+                • Photography club
+                • Literary society
+                • Innovation cell
+                
+                Regular competitions and events are organized.`
+        };
+
+        // Initialize image slider
+        function initializeSlider() {
+            const slider = document.getElementById('imageSlider');
+            imageUrls.forEach((url, index) => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = `NMIT Campus Image ${index + 1}`;
+                img.className = `slider-image ${index === 0 ? 'active' : ''}`;
+                slider.appendChild(img);
+            });
+        }
+
+        // Change slider image
+        let currentImage = 0;
+        function changeImage() {
+            const images = document.querySelectorAll('.slider-image');
+            images[currentImage].classList.remove('active');
+            currentImage = (currentImage + 1) % images.length;
+            images[currentImage].classList.add('active');
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            indicator.classList.add('active');
+            return new Promise(resolve => setTimeout(resolve, 1500));
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            indicator.classList.remove('active');
+        }
+
+        // Send message function
+        async function sendMessage() {
+            const select = document.getElementById('userQuestion');
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            if (!select.value) {
+                alert('Please select a question');
+                return;
+            }
+
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-message';
+            userMessage.textContent = select.options[select.selectedIndex].text;
+            messagesContainer.appendChild(userMessage);
+
+            // Show typing indicator and wait
+            await showTypingIndicator();
+
+            // Hide typing indicator and show response
+            hideTypingIndicator();
+            const botMessage = document.createElement('div');
+            botMessage.className = 'message bot-message';
+            botMessage.innerText = responses[select.value];
+            messagesContainer.appendChild(botMessage);
+
+            // Scroll to latest message
+            botMessage.scrollIntoView({ behavior: 'smooth' });
+
+            // Reset select
+            select.value = '';
+        }
+
+        // Initialize
+        initializeSlider();
+        setInterval(changeImage, 5000);
+    </script>
+</body>
+</html>
